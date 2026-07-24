@@ -1,6 +1,6 @@
 name: Update onboard formula from PyPI
 
-# Keeps Formula/onboard.rb in sync with the latest onboard-memory-mcp release
+# Keeps Formula/onboard-memory.rb in sync with the latest onboard-memory-mcp release
 # on PyPI, so a new On_Board release never needs a manual commit to this tap.
 # Runs daily and on demand; opens a PR when a newer version is found.
 on:
@@ -31,7 +31,7 @@ jobs:
           set -euo pipefail
           latest=$(curl -fsSL https://pypi.org/pypi/onboard-memory-mcp/json \
             | python3 -c 'import sys,json;print(json.load(sys.stdin)["info"]["version"])')
-          current=$(grep -oE 'onboard_memory_mcp-[0-9][0-9.]*\.tar\.gz' Formula/onboard.rb \
+          current=$(grep -oE 'onboard_memory_mcp-[0-9][0-9.]*\.tar\.gz' Formula/onboard-memory.rb \
             | head -1 | sed -E 's/^onboard_memory_mcp-([0-9.]+)\.tar\.gz$/\1/')
           echo "latest=$latest"   >> "$GITHUB_OUTPUT"
           echo "current=$current" >> "$GITHUB_OUTPUT"
@@ -55,7 +55,7 @@ jobs:
           python3 - "$url" "$sha" <<'PY'
           import re, sys
           url, sha = sys.argv[1], sys.argv[2]
-          path = "Formula/onboard.rb"
+          path = "Formula/onboard-memory.rb"
           text = open(path).read()
           head, sep, tail = text.partition("  resource ")
           head = re.sub(r'url "https://files\.pythonhosted\.org/[^"]*onboard_memory_mcp-[^"]*\.tar\.gz"',
@@ -64,8 +64,8 @@ jobs:
           open(path, "w").write(head + sep + tail)
           PY
           brew tap swisspra/tap "$GITHUB_WORKSPACE"
-          brew update-python-resources swisspra/tap/onboard
-          brew style swisspra/tap/onboard
+          brew update-python-resources swisspra/tap/onboard-memory
+          brew style swisspra/tap/onboard-memory
 
       - name: Open pull request
         if: steps.check.outputs.changed == 'true'
@@ -74,13 +74,13 @@ jobs:
           VERSION: ${{ steps.check.outputs.latest }}
         run: |
           set -euo pipefail
-          branch="onboard-${VERSION}"
+          branch="onboard-memory-${VERSION}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b "$branch"
-          git add Formula/onboard.rb
-          git commit -m "onboard ${VERSION}"
+          git add Formula/onboard-memory.rb
+          git commit -m "onboard-memory ${VERSION}"
           git push -u origin "$branch" --force
-          gh pr create --fill --title "onboard ${VERSION}" \
+          gh pr create --fill --title "onboard-memory ${VERSION}" \
             --body "Automated bump to onboard-memory-mcp ${VERSION} (url, sha256, resources regenerated from PyPI)." \
             || echo "PR already exists"

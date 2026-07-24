@@ -1,4 +1,4 @@
-class Onboard < Formula
+class OnboardMemory < Formula
   include Language::Python::Virtualenv
 
   desc "Shared-memory MCP server for multi-agent project coordination"
@@ -193,8 +193,8 @@ class Onboard < Formula
 
   def install
     virtualenv_install_with_resources
-    # short alias: `onboard` -> the onboard-memory-mcp entry point
-    bin.install_symlink bin/"onboard-memory-mcp" => "onboard"
+    # short alias: `onboard-memory` -> the onboard-memory-mcp entry point
+    bin.install_symlink bin/"onboard-memory-mcp" => "onboard-memory"
   end
 
   test do

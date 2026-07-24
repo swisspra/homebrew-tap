@@ -6,20 +6,20 @@ MCP server for multi-agent project coordination.
 ## Install
 
 ```sh
-brew install swisspra/tap/onboard
+brew install swisspra/tap/onboard-memory
 ```
 
 or:
 
 ```sh
 brew tap swisspra/tap
-brew install onboard
+brew install onboard-memory
 ```
 
 This installs two commands (same entry point):
 
 - `onboard-memory-mcp` — the name used in MCP client configs
-- `onboard` — short alias
+- `onboard-memory` — short alias
 
 Point your MCP client at the installed binary, e.g.:
 
@@ -33,7 +33,7 @@ Point your MCP client at the installed binary, e.g.:
 ## Upgrade
 
 ```sh
-brew update && brew upgrade onboard
+brew update && brew upgrade onboard-memory
 ```
 
 The formula tracks the latest [`onboard-memory-mcp`](https://pypi.org/project/onboard-memory-mcp/)
