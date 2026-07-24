@@ -1,0 +1,86 @@
+name: Update onboard formula from PyPI
+
+# Keeps Formula/onboard.rb in sync with the latest onboard-memory-mcp release
+# on PyPI, so a new On_Board release never needs a manual commit to this tap.
+# Runs daily and on demand; opens a PR when a newer version is found.
+on:
+  schedule:
+    - cron: "23 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-onboard
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Check PyPI for a newer version
+        id: check
+        run: |
+          set -euo pipefail
+          latest=$(curl -fsSL https://pypi.org/pypi/onboard-memory-mcp/json \
+            | python3 -c 'import sys,json;print(json.load(sys.stdin)["info"]["version"])')
+          current=$(grep -oE 'onboard_memory_mcp-[0-9][0-9.]*\.tar\.gz' Formula/onboard.rb \
+            | head -1 | sed -E 's/^onboard_memory_mcp-([0-9.]+)\.tar\.gz$/\1/')
+          echo "latest=$latest"   >> "$GITHUB_OUTPUT"
+          echo "current=$current" >> "$GITHUB_OUTPUT"
+          if [ "$latest" != "$current" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "onboard: current=$current latest=$latest"
+
+      - name: Bump url, sha256 and Python resources
+        if: steps.check.outputs.changed == 'true'
+        env:
+          VERSION: ${{ steps.check.outputs.latest }}
+        run: |
+          set -euo pipefail
+          meta=$(curl -fsSL "https://pypi.org/pypi/onboard-memory-mcp/${VERSION}/json")
+          url=$(printf '%s' "$meta" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(next(u["url"] for u in d["urls"] if u["packagetype"]=="sdist"))')
+          sha=$(printf '%s' "$meta" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(next(u["digests"]["sha256"] for u in d["urls"] if u["packagetype"]=="sdist"))')
+          # Replace the formula's own url + the first sha256 (the one before any resource block).
+          python3 - "$url" "$sha" <<'PY'
+          import re, sys
+          url, sha = sys.argv[1], sys.argv[2]
+          path = "Formula/onboard.rb"
+          text = open(path).read()
+          head, sep, tail = text.partition("  resource ")
+          head = re.sub(r'url "https://files\.pythonhosted\.org/[^"]*onboard_memory_mcp-[^"]*\.tar\.gz"',
+                        f'url "{url}"', head, count=1)
+          head = re.sub(r'sha256 "[0-9a-f]{64}"', f'sha256 "{sha}"', head, count=1)
+          open(path, "w").write(head + sep + tail)
+          PY
+          brew tap swisspra/tap "$GITHUB_WORKSPACE"
+          brew update-python-resources swisspra/tap/onboard
+          brew style swisspra/tap/onboard
+
+      - name: Open pull request
+        if: steps.check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.check.outputs.latest }}
+        run: |
+          set -euo pipefail
+          branch="onboard-${VERSION}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add Formula/onboard.rb
+          git commit -m "onboard ${VERSION}"
+          git push -u origin "$branch" --force
+          gh pr create --fill --title "onboard ${VERSION}" \
+            --body "Automated bump to onboard-memory-mcp ${VERSION} (url, sha256, resources regenerated from PyPI)." \
+            || echo "PR already exists"
