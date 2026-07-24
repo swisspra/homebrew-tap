@@ -16,6 +16,9 @@ brew tap swisspra/tap
 brew install onboard-memory
 ```
 
+> On Homebrew 6+, the first install of a non-official tap asks you to trust it —
+> approve the prompt or run `brew trust swisspra/tap`.
+
 This installs two commands (same entry point):
 
 - `onboard-memory-mcp` — the name used in MCP client configs
