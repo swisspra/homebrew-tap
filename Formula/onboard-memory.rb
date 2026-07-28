@@ -3,8 +3,8 @@ class OnboardMemory < Formula
 
   desc "Shared-memory MCP server for multi-agent project coordination"
   homepage "https://github.com/swisspra/On_Board"
-  url "https://files.pythonhosted.org/packages/00/7f/1c13ef4a93b37367444ec7b819bbac9a6c00890869362c53f2ced955dce6/onboard_memory_mcp-3.7.1.tar.gz"
-  sha256 "ac01a2769f41eaa37a7dc844a34c653aedfdf71ed4017127396fa3c4ea64c552"
+  url "https://files.pythonhosted.org/packages/31/07/cc055c87db94965cf1c5278001fd5499bbec05a8e16371deace097b5525e/onboard_memory_mcp-4.0.0.tar.gz"
+  sha256 "f46c7346ac35f78d8440e781145f10fa90ee8702b2227a969bc94b3f772eeb6b"
   license "Apache-2.0"
 
   depends_on "rust" => :build # builds the cryptography extension
@@ -199,7 +199,7 @@ class OnboardMemory < Formula
 
   test do
     assert_path_exists bin/"onboard-memory-mcp"
-    assert_path_exists bin/"onboard"
+    assert_path_exists bin/"onboard-memory"
     # server.py must import with all deps (cryptography, mcp, pydantic, ...) present
     system libexec/"bin/python", "-c", "import server; assert hasattr(server, 'mcp')"
   end
