@@ -79,6 +79,10 @@ jobs:
           branch="onboard-memory-${VERSION}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # setup-homebrew clears the credential actions/checkout persisted, so the
+          # push has no auth and dies with "could not read Username for github.com".
+          # Point origin at a token URL instead of relying on the wiped header.
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git checkout -b "$branch"
           git add Formula/onboard-memory.rb
           git commit -m "onboard-memory ${VERSION}"
