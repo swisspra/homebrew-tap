@@ -87,6 +87,15 @@ jobs:
           git add Formula/onboard-memory.rb
           git commit -m "onboard-memory ${VERSION}"
           git push -u origin "$branch" --force
-          gh pr create --fill --title "onboard-memory ${VERSION}" \
-            --body "Automated bump to onboard-memory-mcp ${VERSION} (url, sha256, resources regenerated from PyPI)." \
-            || echo "PR already exists"
+          # Do NOT `|| echo "PR already exists"`. That masked the real error for as
+          # long as this workflow has existed: the run went green while gh had
+          # failed with "GitHub Actions is not permitted to create or approve pull
+          # requests", so nobody learned the branch was pushed and abandoned.
+          # Only an already-open PR is tolerated, and it is checked, not assumed.
+          if gh pr view "$branch" --json number >/dev/null 2>&1; then
+            echo "PR for $branch already open; branch updated in place."
+          else
+            gh pr create --title "onboard-memory ${VERSION}" \
+              --body "Automated bump to onboard-memory-mcp ${VERSION} (url, sha256, resources regenerated from PyPI)." \
+              --head "$branch" --base main
+          fi
