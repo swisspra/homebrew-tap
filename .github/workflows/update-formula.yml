@@ -63,7 +63,9 @@ jobs:
           head = re.sub(r'sha256 "[0-9a-f]{64}"', f'sha256 "{sha}"', head, count=1)
           open(path, "w").write(head + sep + tail)
           PY
-          brew tap swisspra/tap "$GITHUB_WORKSPACE"
+          # NOT `brew tap swisspra/tap "$GITHUB_WORKSPACE"`: setup-homebrew already
+          # symlinks this checkout as the tap, with the GitHub URL as its remote, so
+          # re-tapping a local path fails with "Tap swisspra/tap remote mismatch".
           brew update-python-resources swisspra/tap/onboard-memory
           brew style swisspra/tap/onboard-memory
 
