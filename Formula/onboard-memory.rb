@@ -3,8 +3,8 @@ class OnboardMemory < Formula
 
   desc "Shared-memory MCP server for multi-agent project coordination"
   homepage "https://github.com/swisspra/On_Board"
-  url "https://files.pythonhosted.org/packages/9a/0f/edfcb317d09b18d0a17a1c5d32d0a27f74f656cab7396ba49be7900cff3a/onboard_memory_mcp-4.1.0.tar.gz"
-  sha256 "c958cdcfedb8bce47d1074ce4f874a101bc7374f4de6d417238f4e635cd98ce9"
+  url "https://files.pythonhosted.org/packages/24/9d/226933a22cce666ff81827081d85753c48cf6d75ee0c502fb76ded66dd50/onboard_memory_mcp-4.1.1.tar.gz"
+  sha256 "f948ff69623638c66bd6addfa88dbbebba541ab8fc116905a9e0351f594f3300"
   license "Apache-2.0"
 
   depends_on "pkgconf" => :build
