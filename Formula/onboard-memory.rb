@@ -7,6 +7,12 @@ class OnboardMemory < Formula
   sha256 "f948ff69623638c66bd6addfa88dbbebba541ab8fc116905a9e0351f594f3300"
   license "Apache-2.0"
 
+  bottle do
+    root_url "https://github.com/swisspra/homebrew-tap/releases/download/onboard-memory-4.1.1"
+    sha256 cellar: :any, arm64_tahoe:  "ba33f6cac5b809702141910a9350ef52938e409427e93675dbd91e615db0e62a"
+    sha256 cellar: :any, x86_64_linux: "6c226aea8d48da9dc5c38e2865120a8c04565acf80b919f2f63122e11824b772"
+  end
+
   depends_on "pkgconf" => :build
   depends_on "rust" => :build # builds the cryptography extension
   depends_on "openssl@3"
