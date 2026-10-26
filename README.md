@@ -59,6 +59,11 @@ gh workflow run update-formula.yml --repo swisspra/homebrew-tap
 The updater exempts only the newly verified main package from Homebrew's release
 cooldown. Its dependencies retain the normal cooldown.
 
+Native resources rely on the formula's declared `pkgconf`/Rust build tools and
+OpenSSL 3/Python 3.12 dependencies. CFFI uses system libffi on macOS and Homebrew
+libffi on Linux; retain the build, runtime, and linkage checks when updating
+resources.
+
 After reviewing the generated PR and all `brew test-bot` platform checks pass,
 publish its bottles and formula using the exact reviewed head commit:
 
