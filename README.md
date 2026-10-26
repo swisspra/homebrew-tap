@@ -43,6 +43,11 @@ The formula tracks the latest [`onboard-memory-mcp`](https://pypi.org/project/on
 release on PyPI; a scheduled workflow opens a bump PR automatically when a new
 version ships.
 
+Bottles are built and tested on ARM macOS and x86_64 Linux. Intel macOS keeps
+tap-syntax checks only: upstream Homebrew currently provides no compatible
+Rust, OpenSSL 3, or Python 3.12 bottles for that runner. No Intel bottle build
+is claimed. The platform-independent PyPI package remains available.
+
 ## Release maintenance
 
 After publishing an upstream release to PyPI, dispatch the updater:

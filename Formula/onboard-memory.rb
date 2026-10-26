@@ -7,6 +7,7 @@ class OnboardMemory < Formula
   sha256 "c958cdcfedb8bce47d1074ce4f874a101bc7374f4de6d417238f4e635cd98ce9"
   license "Apache-2.0"
 
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build # builds the cryptography extension
   depends_on "openssl@3"
   depends_on "python@3.12"
