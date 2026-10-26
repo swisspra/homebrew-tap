@@ -42,3 +42,22 @@ brew update && brew upgrade onboard-memory
 The formula tracks the latest [`onboard-memory-mcp`](https://pypi.org/project/onboard-memory-mcp/)
 release on PyPI; a scheduled workflow opens a bump PR automatically when a new
 version ships.
+
+## Release maintenance
+
+After publishing an upstream release to PyPI, dispatch the updater:
+
+```sh
+gh workflow run update-formula.yml --repo swisspra/homebrew-tap
+```
+
+The updater exempts only the newly verified main package from Homebrew's release
+cooldown. Its dependencies retain the normal cooldown.
+
+After reviewing the generated PR and all `brew test-bot` platform checks pass,
+publish its bottles and formula using the exact reviewed head commit:
+
+```sh
+gh workflow run publish.yml --repo swisspra/homebrew-tap \
+  -f pull_request=PR_NUMBER -f head_sha=REVIEWED_HEAD_SHA
+```
