@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        uses: Homebrew/actions/setup-homebrew@b35a29a0f83ee8b8ca07b219fc8db3d7bb88ab49 # 2026.08.10.2
 
       - name: Check PyPI for a newer version
         id: check
