@@ -66,7 +66,8 @@ jobs:
           # NOT `brew tap swisspra/tap "$GITHUB_WORKSPACE"`: setup-homebrew already
           # symlinks this checkout as the tap, with the GitHub URL as its remote, so
           # re-tapping a local path fails with "Tap swisspra/tap remote mismatch".
-          brew update-python-resources swisspra/tap/onboard-memory
+          # Our verified release is new; dependencies still keep Homebrew's cooldown.
+          brew update-python-resources --ignore-main-package-cooldown swisspra/tap/onboard-memory
           brew style swisspra/tap/onboard-memory
 
       - name: Open pull request
