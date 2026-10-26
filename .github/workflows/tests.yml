@@ -53,8 +53,9 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
-          git fetch --no-tags origin "$BASE_SHA" "$HEAD_SHA"
-          changed_files=$(git diff --name-only --diff-filter=ACMRT "$BASE_SHA" "$HEAD_SHA" -- 'Formula/*.rb')
+          tap_repository=$(brew --repository "$GITHUB_REPOSITORY")
+          git -C "$tap_repository" fetch --no-tags origin "$BASE_SHA" "$HEAD_SHA"
+          changed_files=$(git -C "$tap_repository" diff --name-only --diff-filter=ACMRT "$BASE_SHA" "$HEAD_SHA" -- 'Formula/*.rb')
           if [[ -n "$changed_files" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else
